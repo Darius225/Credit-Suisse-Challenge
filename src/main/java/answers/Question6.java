@@ -29,13 +29,13 @@ public class Question6 {
             int candidateServer = ((LinkedList<Integer>) servers).pollFirst();
             long distanceFromSource = bestDistances [ candidateServer ] ;
             for (int dest = 0; dest < n ; dest ++) {
-                    int cost = costs [ candidateServer ] [ dest ] ;
-                    long bestDistanceToDest = bestDistances [ dest ] ;
-                    if ( bestDistanceToDest > distanceFromSource + cost )
-                    {
-                        bestDistances [ dest ] = distanceFromSource + cost ;
-                        servers.add(dest);
-                    }
+                int cost = costs [ candidateServer ] [ dest ] ;
+                long bestDistanceToDest = bestDistances [ dest ] ;
+                if ( bestDistanceToDest > distanceFromSource + cost )
+                {
+                    bestDistances [ dest ] = distanceFromSource + cost ;
+                    servers.add(dest);
+                }
             }
         }
         return bestDistances[k] ;
