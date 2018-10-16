@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.Set;
 
 public class Question6 {
-    private static final int INF = Integer.MAX_VALUE ;
     public static int shortestServerRoute(int numServers, int targetServer, int[][] times) {
         Map graph = new Map();
         graph.setArcs(times);
@@ -22,8 +21,8 @@ public class Question6 {
         int n = graph.getNumServers();
         int k = graph.getTarget();
         int[] bestDistances = new int[n];
-        initializeWithINFValue(bestDistances);
         int[][] costs = graph.getArcs();
+        initializeWithINFValue(bestDistances,costs [ 0 ] [ k ]);
         bestDistances [ 0 ] = 0 ;
         queueSet.add(0);
         while( ! queueSet.isEmpty() )
@@ -46,7 +45,7 @@ public class Question6 {
         }
         return bestDistances[k] ;
     }
-    private static void initializeWithINFValue ( int[] array )
+    private static void initializeWithINFValue ( int[] array , int INF )
     {
         int n = array.length ;
         for (int i = 0; i < n ; i++)
