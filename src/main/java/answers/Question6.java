@@ -2,8 +2,10 @@ package answers;
 
 import helpers.Map;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 public class Question6 {
     private static final int INF = Integer.MAX_VALUE ;
@@ -16,27 +18,28 @@ public class Question6 {
     }
     private static int bellmanFord(Map graph)
     {
-        Queue<Integer> servers = new LinkedList<>();
+        QueueSet<Integer> queueSet = new QueueSet<>();
         int n = graph.getNumServers();
         int k = graph.getTarget();
         int[] bestDistances = new int[n];
         initializeWithINFValue(bestDistances);
         int[][] costs = graph.getArcs();
         bestDistances [ 0 ] = 0 ;
-        servers.add(0);
-        while( ! servers.isEmpty() )
+        queueSet.add(0);
+        while( ! queueSet.isEmpty() )
         {
-            int candidateServer = ((LinkedList<Integer>) servers).pollFirst();
+            int candidateServer = queueSet.pollFirst();
+
             int distanceFromSource = bestDistances [ candidateServer ] ;
             for (int dest = 0; dest < n ; dest ++) {
                 if ( candidateServer != dest )
                 {
                     int cost = costs [ candidateServer ] [ dest ] ;
                     int bestDistanceToDest = bestDistances [ dest ] ;
-                    if ( bestDistanceToDest > distanceFromSource + cost )
+                    if ( bestDistanceToDest - cost > distanceFromSource  )
                     {
                         bestDistances [ dest ] = distanceFromSource + cost ;
-                        servers.add(dest);
+                        queueSet.add(dest);
                     }
                 }
             }
@@ -54,4 +57,33 @@ public class Question6 {
 
 
 
+}
+class QueueSet<T>
+{
+    Queue<T> queue;
+    Set<T> inQueue;
+    public QueueSet()
+    {
+        queue = new LinkedList<>();
+        inQueue = new HashSet<>();
+
+    }
+    public void add(T value )
+    {
+        if ( ! inQueue.contains(value) )
+        {
+            queue.add(value);
+            inQueue.add(value);
+        }
+    }
+    public T pollFirst()
+    {
+        T firstElement = queue.poll();
+        inQueue.remove(firstElement);
+        return firstElement;
+    }
+    public boolean isEmpty()
+    {
+        return queue.isEmpty();
+    }
 }
