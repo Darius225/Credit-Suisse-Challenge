@@ -1,24 +1,38 @@
 package answers;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class Question2 {
 	public static int equallyBalancedCashFlow(int[] cashflowIn, int[] cashflowOut)
 	{
 
 
-		//Dimensions
-		int n = cashflowIn.length;
-		int m = cashflowOut.length;
+		Set<Integer> aValues = createSums ( cashflowIn ) ;
+		Set<Integer> bValues = createSums ( cashflowOut ) ;
 
-		boolean[] aValues = createSums ( cashflowIn ) ;
-		boolean[] bValues = createSums ( cashflowOut ) ;
-
+		//the difference margin,howewer this will immediately get low if the the input respects the constraints
 		int ans = 1000 ;
+
+		//We need to check both cases
+		ans = checkCase(aValues,bValues,ans);
+		ans = checkCase(bValues,aValues,ans);
+
+		return ans ;
+	}
+
+	//Method useful for finding if the values in set b are smaller then a by a difference
+	public static int checkCase(Set<Integer> a , Set<Integer> b , int ans )
+	{
 		for (int i = 1; i <= 100000  && ans != 0; i++) {
-			if (aValues[i])
+			if (a.contains(i))
 			{
 				boolean found = false ;
 				for (int j = 0; j < ans && found == false ; j++) {
-					if ( bValues [ i - j ] )
+					if ( b.contains( i - j))
 					{
 						found = true ;
 						ans = j ;
@@ -29,20 +43,19 @@ public class Question2 {
 		return ans ;
 	}
 
-	public static boolean[] createSums( int[] cashFlow ) {
-		boolean[] previousTouchedValues = new boolean[100001];
-		boolean[] touchedValues = new boolean[100001];
+	//We will maintain a set of obtainable sums
+	public static Set<Integer> createSums(int[] cashFlow ) {
+		Set<Integer> sums = new HashSet<>();
 		int n = cashFlow.length ;
-		previousTouchedValues [ 0 ] = true ;
+		sums.add(0);
 		for (int i = 0; i < n ; i++) {
-			for (int j = 0; j <= 100000 - cashFlow [ i ] ; j++)
-			{
-				touchedValues [ j + cashFlow [ i ] ] = previousTouchedValues [ j + cashFlow [ i ] ] | previousTouchedValues [ j ]  ;
+			Set<Integer> stepSums = new HashSet<>();
+			for (Integer sum:sums
+			) {
+				stepSums.add(sum + cashFlow [ i ] ) ;
 			}
-			for (int j = 1; j <= 100000 ; j++) {
-				previousTouchedValues [ j ] = touchedValues [ j ] ;
-			}
+			sums.addAll(stepSums);
 		}
-		return previousTouchedValues ;
+		return sums ;
 	}
 }
