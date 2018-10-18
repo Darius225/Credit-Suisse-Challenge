@@ -6,16 +6,16 @@ public class Question4 {
 		int[][] intRepresentation = transformStringsToInts(rows);
 		int n = rows.length ;
 		int answer = Integer.MAX_VALUE ;
-		if ( ! noSolution(intRepresentation,numberMachines) )
-		{
-			return 0 ;
-		}
 		for (int i = 0; i < n ; i++) {
 			int minRow = minSumRow(intRepresentation[i],numberMachines) ;
 			if ( minRow < answer )
 			{
 				answer = minRow ;
 			}
+		}
+		if ( answer == Integer.MAX_VALUE )
+		{
+			return 0 ;
 		}
 		return answer ;
 	}
@@ -41,62 +41,34 @@ public class Question4 {
 		}
 		return Integer.parseInt(s);
 	}
-	private static boolean noSolution(int[][] values , int target )
-	{
-		int noRows = values.length;
-		int noColumns = values[0].length;
-		for (int i = 0; i < noRows ; i++)
-		{
-			int currentConsecutiveValues = 0 ;
-			for (int j = 0; j < noColumns ; j++)
-			{
-				if ( values [ i ] [ j ] >= 0 )
-				{
-					currentConsecutiveValues ++ ;
-					if ( currentConsecutiveValues == target )
-					{
-						return true ;
-					}
-				}
-				if ( values [ i ] [ j ] < 0 )
-				{
-					currentConsecutiveValues = 0 ;
-				}
-			}
-		}
-		return false ;
-	}
 	private static int minSumRow(int[] row , int target )
 	{
 		int n = row.length ;
-		int[] partialSums = new int[n];
 		int minSum = Integer.MAX_VALUE ;
-		partialSums [ 0 ] = row [ 0 ] ;
-		for (int i = 1; i < n ; i++)
-		{
-			partialSums [ i ] = partialSums [ i - 1 ] + row [ i ] ;
-		}
+
+		//Use just a variable to contain the sum of a valid subsequence
+		int currentSum = 0 ;
+
 		int currentConsecutiveValidNumbers = 0 ;
 		for ( int i = 0 ; i < n ; i ++ )
 		{
 			if ( row [ i ] >= 0 )
 			{
+				currentSum += row [ i ] ;
 				currentConsecutiveValidNumbers ++ ;
 				if ( currentConsecutiveValidNumbers >= target )
 				{
-					int currentSum = partialSums [ i ]  ;
-					if ( i >= target )
-					{
-						currentSum -= partialSums [ i - target ] ;
-					}
 					if ( currentSum < minSum )
 					{
 						minSum = currentSum ;
 					}
+					currentSum -= row [ i - target + 1 ] ;
 				}
 			}
 			else
 			{
+				//reset the variables in order to not add an invalid value to the sums
+				currentSum = 0 ;
 				currentConsecutiveValidNumbers = 0 ;
 			}
 		}

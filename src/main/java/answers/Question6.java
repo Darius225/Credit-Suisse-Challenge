@@ -29,11 +29,11 @@ public class Question6 {
         {
             int candidateServer = queueSet.pollFirst();
 
-            int distanceFromSource = bestDistances [ candidateServer ] ;
             for (int dest = 0; dest < n ; dest ++) {
                 if ( candidateServer != dest )
                 {
                     int cost = costs [ candidateServer ] [ dest ] ;
+                    int distanceFromSource = bestDistances [ candidateServer ] ;
                     int bestDistanceToDest = bestDistances [ dest ] ;
                     if ( bestDistanceToDest - cost > distanceFromSource  )
                     {
