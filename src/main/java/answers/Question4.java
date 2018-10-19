@@ -6,11 +6,12 @@ public class Question4 {
 	public static int selectionFailedTradedesks(String[][] rows, int numberMachines) {
 
 		int n = rows.length ;
+		int m = rows [ 0 ] . length;
 		int answer = Integer.MAX_VALUE ;
 		for (int i = 0; i < n ; i++) {
 			int currentSum = 0 ;
 			int currentConsecutiveValidValues = 0 ;
-			for (int j = 0; j < n ; j++)
+			for (int j = 0; j < m ; j++)
 			{
 				int value = getNumericValue( rows [ i ] [ j ] ) ;
 				if ( value >= 0 )
