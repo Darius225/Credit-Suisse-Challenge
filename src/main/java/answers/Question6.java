@@ -28,18 +28,22 @@ public class Question6 {
         while( ! queueSet.isEmpty() )
         {
             int candidateServer = queueSet.pollFirst();
-
             for (int dest = 0; dest < n ; dest ++) {
                 if ( candidateServer != dest )
                 {
+                    //It does not make any sense to go further than the necessary distance to reach node k
+                    bestDistances [ dest ] = bestDistances [ k ] ;
+
                     int cost = costs [ candidateServer ] [ dest ] ;
                     int distanceFromSource = bestDistances [ candidateServer ] ;
                     int bestDistanceToDest = bestDistances [ dest ] ;
-                    if ( bestDistanceToDest - cost > distanceFromSource  )
+
+                    if ( bestDistanceToDest - cost > distanceFromSource   )
                     {
                         bestDistances [ dest ] = distanceFromSource + cost ;
                         queueSet.add(dest);
                     }
+
                 }
             }
         }
