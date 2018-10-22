@@ -1,5 +1,6 @@
 package answers;
 
+
 import helpers.Map;
 
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class Question6 {
                 if ( candidateServer != dest )
                 {
                     //It does not make any sense to go further than the necessary distance to reach node k
-                    bestDistances [ dest ] = bestDistances [ k ] ;
+                    bestDistances [ dest ] = Math.min(bestDistances [ k ] ,bestDistances[dest] );
 
                     int cost = costs [ candidateServer ] [ dest ] ;
                     int distanceFromSource = bestDistances [ candidateServer ] ;
