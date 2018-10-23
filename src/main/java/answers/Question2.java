@@ -27,7 +27,7 @@ public class Question2 {
 	//Method useful for finding if the values in set b are smaller then a by a difference
 	public static int checkCase(Set<Integer> a , Set<Integer> b , int ans )
 	{
-		for (int i = 1; i <= 100000  && ans != 0; i++) {
+		for (int i = 1; i <= 10000  && ans != 0; i++) {
 			if (a.contains(i))
 			{
 				boolean found = false ;
@@ -51,8 +51,12 @@ public class Question2 {
 		for (int i = 0; i < n ; i++) {
 			Set<Integer> stepSums = new HashSet<>();
 			for (Integer sum:sums
-			) {
-				stepSums.add(sum + cashFlow [ i ] ) ;
+			)
+			{
+				//Trying to exploit that all the numbers are between 1 and 100
+				if ( sum + cashFlow [ i ] <= 10000 ) {
+					stepSums.add(sum + cashFlow[i]);
+				}
 			}
 			sums.addAll(stepSums);
 		}

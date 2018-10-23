@@ -3,10 +3,8 @@ package answers;
 
 import helpers.Map;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.Collection;
+import java.util.PriorityQueue;
 
 public class Question6 {
     public static int shortestServerRoute(int numServers, int targetServer, int[][] times) {
@@ -14,80 +12,111 @@ public class Question6 {
         graph.setArcs(times);
         graph.setNumServers(numServers);
         graph.setTarget(targetServer);
-        return bellmanFord(graph);
+        return dijkstra(graph);
     }
-    private static int bellmanFord(Map graph)
+    private static int dijkstra(Map graph)
     {
-        QueueSet<Integer> queueSet = new QueueSet<>();
         int n = graph.getNumServers();
         int k = graph.getTarget();
-        int[] bestDistances = new int[n];
         int[][] costs = graph.getArcs();
-        initializeWithINFValue(bestDistances,costs [ 0 ] [ k ]);
-        bestDistances [ 0 ] = 0 ;
-        queueSet.add(0);
-        while( ! queueSet.isEmpty() )
+        Server[] serverList = new Server[n];
+        PriorityQueue<Server> servers = new PriorityQueue<>(n);
+        initializeServers(serverList,costs[0][k]);
+        addInQueue(serverList,servers);
+        while( ! servers.isEmpty() )
         {
-            int candidateServer = queueSet.pollFirst();
+            Server server = servers.poll();
+            int candidateServer = server.getNumber();
+            int distanceFromSource = server.getDistance();
             for (int dest = 0; dest < n ; dest ++) {
                 if ( candidateServer != dest )
                 {
-                    //It does not make any sense to go further than the necessary distance to reach node k
-                    bestDistances [ dest ] = Math.min(bestDistances [ k ] ,bestDistances[dest] );
-
+                    int lastDistance = serverList[dest].getDistance();
                     int cost = costs [ candidateServer ] [ dest ] ;
-                    int distanceFromSource = bestDistances [ candidateServer ] ;
-                    int bestDistanceToDest = bestDistances [ dest ] ;
 
-                    if ( bestDistanceToDest - cost > distanceFromSource   )
+                    if ( lastDistance - cost > distanceFromSource   )
                     {
-                        bestDistances [ dest ] = distanceFromSource + cost ;
-                        queueSet.add(dest);
+                        servers.remove(serverList[dest]);
+
+                        /**
+                         * We are only interested to minimise the distance to kth server
+                         * so if a path already exceeds that value is no longer a valid
+                         * candidate
+                         */
+
+                        if ( distanceFromSource + cost < serverList [ k ] .getDistance() )
+                        {
+                            serverList[dest].setDistance(distanceFromSource  + cost );
+                            servers.add(serverList[dest]);
+                        }
                     }
 
                 }
             }
         }
-        return bestDistances[k] ;
+        return serverList[k].getDistance() ;
     }
-    private static void initializeWithINFValue ( int[] array , int INF )
+    private static void initializeServers ( Server[] servers , int value )
     {
-        int n = array.length ;
-        for (int i = 0; i < n ; i++)
+        int n = servers.length ;
+        for (int i = 1; i < n ; i++)
         {
-            array [ i ] = INF ;
+            servers [ i ] = new Server(value , i ) ;
+        }
+        servers [ 0 ] = new Server( 0 , 0 ) ;
+    }
+    private static void addInQueue(Server[] serverList , PriorityQueue<Server> serversQueue )
+    {
+        for (Server server:serverList)
+        {
+            serversQueue.add(server);
         }
     }
-
+    private static void displayServers(Collection<Server> servers )
+    {
+        for (Server server:servers)
+        {
+            System.out.println(server);
+        }
+    }
 
 
 }
-class QueueSet<T>
+class Server implements Comparable<Server>
 {
-    Queue<T> queue;
-    Set<T> inQueue;
-    public QueueSet()
-    {
-        queue = new LinkedList<>();
-        inQueue = new HashSet<>();
+    private int distance ;
+    private int number ;
 
-    }
-    public void add(T value )
+    public Server(int distance, int number)
     {
-        if ( ! inQueue.contains(value) )
-        {
-            queue.add(value);
-            inQueue.add(value);
-        }
+        this.distance = distance ;
+        this.number = number ;
     }
-    public T pollFirst()
-    {
-        T firstElement = queue.poll();
-        inQueue.remove(firstElement);
-        return firstElement;
+
+    public int getDistance() {
+        return distance;
     }
-    public boolean isEmpty()
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+
+    @Override
+    public int compareTo(Server server) {
+        return this.distance - server.getDistance();
+    }
+    @Override
+    public String toString()
     {
-        return queue.isEmpty();
+        return "The node is " + number + " and the distance: " + distance;
     }
 }
